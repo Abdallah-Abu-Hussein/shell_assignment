@@ -63,7 +63,7 @@ detect_distro() {
 }
 
 install_fastfetch_if_needed() {
-    if command  fastfetch &>/dev/null; then
+    if command -v fastfetch &>/dev/null; then
         # Already installed
         log_message "fastfetch is already installed."
         return 0
@@ -85,13 +85,14 @@ install_fastfetch_if_needed() {
             ;;
         "ubuntu")
             # Ubuntu
-            # fastfetch might be in a PPA or official repos depending on version
-            # Try direct install from official repos if available:
-            if sudo apt-get update -y &>/dev/null && sudo apt-get install -y fastfetch &>/dev/null; then
-                log_message "fastfetch installed successfully (apt-get)."
+            log_message "Adding the Fastfetch PPA and installing..."
+            if sudo add-apt-repository -y ppa:zhangsongcui3371/fastfetch &>/dev/null && \
+               sudo apt-get update -y &>/dev/null && \
+               sudo apt-get install -y fastfetch &>/dev/null; then
+                log_message "fastfetch installed successfully (via PPA)."
                 return 0
             else
-                log_message "Failed to install fastfetch on Ubuntu via apt-get."
+                log_message "Failed to install fastfetch on Ubuntu via PPA."
                 return 1
             fi
             ;;
@@ -102,6 +103,7 @@ install_fastfetch_if_needed() {
             ;;
     esac
 }
+
 
 display_ascii_art() {
     clear
